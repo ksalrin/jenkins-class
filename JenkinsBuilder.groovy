@@ -41,7 +41,7 @@ def slavePodTemplate = """
       node(k8slabel) {
           stage('Checkout SCM'){
               checkout SCM
-          }
+            }
           
           dir('deployments/docker') {
                 stage('checking') {
