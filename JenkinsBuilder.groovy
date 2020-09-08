@@ -39,17 +39,17 @@ def slavePodTemplate = """
     """
     podTemplate(name: k8slabel, label: k8slabel, yaml: slavePodTemplate, showRawYaml: false) {
       node(k8slabel) {
-          stage('Checkout SCM'){
-              checkout SCM
-            }
+        stage('Checkout SCM'){
+           checkout SCM
+        }
           
-          dir('deployments/docker') {
-                stage("Docker Build"){
-                    sh 'docker build -t artemis'
-                }
-                stage('checking') {
-                    sh 'ls -l'
-                }
+        dir('deployments/docker') {
+            stage("Docker Build"){
+             sh 'docker build -t artemis'
+            }
+            stage('checking') {
+             sh 'ls -l'
             }
         }
     }
+}
