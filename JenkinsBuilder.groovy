@@ -2,6 +2,29 @@
 def k8slabel = "jenkins-pipeline-${UUID.randomUUID().toString()}"
 def branch = "${scm.branches[0].name}".replaceAll(/^\*\//, '')
 def gitCommitHash = ''
+def enviroment = ""
+
+if (branch == "master") {
+  
+  println("The application will be deployed to stage environment!")
+  enviroment = "stage"
+  
+} 
+
+else if (branch.contains('dev-feature')){
+  println("The application will be deployed to dev environment!")
+  enviroment = "dev"
+}
+
+else if (branch.contains('qa-feature')){
+  println("The application will be deployed to qa environment!")
+  enviroment = "qa"
+}
+else {
+  println("Please use proper name for your branch")
+  currentBuild.result = 'FAILURE'
+  println("ERROR Detected:")
+}
 
 properties([
     [$class: 'RebuildSettings', autoRebuild: false, rebuildDisabled: false],
@@ -9,9 +32,6 @@ properties([
          booleanParam(defaultValue: false, description: 'Select to be able push to latest', name: 'pushLatest'
         )])
     ])
-
-
-
 
     
 // yaml def for slaves 
@@ -78,6 +98,17 @@ def slavePodTemplate = """
                         sh "docker tag artemis ksalrin/artemis:${gitCommitHash}"
                         sh "docker push ksalrin/artemis:${gitCommitHash}"
                     }
+                    
+                    stage('Trigger Deploy'){
+                        build job: 'artemis-deploy', 
+                        parameters: [
+                          booleanParam(name: 'applyChanges', value: true),
+                          booleanParam(name: 'destroyChanges', value: false),
+                          string(name: 'selectedDockerImage', value: "ksalrin/artemis:${gitCommitHash}"), 
+                          string(name: 'enviroment', value: 'dev')
+                          ]
+                    }
+                  
                 }
             }
         }
