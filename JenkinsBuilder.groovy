@@ -23,7 +23,7 @@ else if (branch.contains('qa-feature')){
 else {
   println("Please use proper name for your branch")
   currentBuild.result = 'FAILURE'
-  println("ERROR Detected:")
+  error('Please use proper name for your branch!')
 }
 
 properties([
