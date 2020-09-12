@@ -64,10 +64,11 @@ def slavePodTemplate = """
                 }  
             }
         }
+
         stage("Destroy") {
             container("fuchicorptools") {
-                if (!applyChanges) {
-                    if (destroyChanges) {
+                if (!params.applyChanges) {
+                    if (params.destroyChanges) {
                         println("Destroying everything")
                     } 
                 } else {
@@ -79,5 +80,5 @@ def slavePodTemplate = """
                 } 
             }
         }
-      }
     }
+
