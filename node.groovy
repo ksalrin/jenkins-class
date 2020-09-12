@@ -51,10 +51,5 @@ def slavePodTemplate = """
                 sh 'docker --version'
             }
         }
-        stage("Terraform Check") {
-            container("terraform") {
-                sh 'terraform version'
-            }
-        }
       }
     }

@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    run: artemis-deploy
+  name: artemis-deploy
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      run: artemis-deploy
+  template:
+    metadata:
+      labels:
+        run: artemis-deploy
+    spec:
+      containers:
+      - image: ksalrin/artemis:latest
+        name: artemis-deploy
+        ports:
+        - containerPort: 5000
