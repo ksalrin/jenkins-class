@@ -47,40 +47,37 @@ def slavePodTemplate = """
               path: /var/run/docker.sock
     """
     podTemplate(name: k8slabel, label: k8slabel, yaml: slavePodTemplate, showRawYaml: false) {
-      node(k8slabel) {
-          container("fuchicorptools") {
-            stage("Pull the SCM"){
-                git 'https://github.com/ksalrin/jenkins-class.git'
-            }  
-            dir('deployments/k8s'){
-                stage("Apply/Plan") {
-                    if (!params.destroyChanges) {
-                        if (params.applyChanges) {
-                            println("Applying the changes!")
-                        } else {
-                            println("Planing the changes")
-                        }
-                    }  
+        node(k8slabel) {
+            container("fuchicorptools") {
+                stage("Pull the SCM") {
+                    git 'https://github.com/fsadykov/jenkins-class'
                 }
-
-                stage("Destroy") {
-                    if (!params.applyChanges) {
-                        if (params.destroyChanges) {
-                            println("Destroying everything")
-                        } 
-                    }    
-                    if (params.applyChanges) {
-                        if (params.destroyChanges){
-                            println("""
+                dir('deployments/k8s') {
+                    stage("Apply/Plan") {
+                        if (!params.destroyChanges) {
+                            if (params.applyChanges) {
+                                println("Applying the changes!")
+                            } else {
+                                println("Planing the changes")
+                            }
+                        }
+                    }
+                    stage("Destroy") {
+                        if (!params.applyChanges) {
+                            if (params.destroyChanges) {
+                                println("Destroying everything")
+                            } 
+                        }
+                        if (params.applyChanges) {
+                            if (params.destroyChanges) {
+                                println("""
                                 Sorry I can not destroy Tools!!!
                                 I can Destroy only following environments dev, qa, test, stage
                                 """)
-
+                            }
                         }
-
                     }
-            
                 }
             }
         }
-    }    
+    }
