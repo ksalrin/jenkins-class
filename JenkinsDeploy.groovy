@@ -48,37 +48,39 @@ def slavePodTemplate = """
     """
     podTemplate(name: k8slabel, label: k8slabel, yaml: slavePodTemplate, showRawYaml: false) {
       node(k8slabel) {
+          container("fuchicorptools") {
+            stage("Pull the SCM"){
+                git 'https://github.com/ksalrin/jenkins-class.git'
+            }  
+            dir('deployments/k8s'){
+                stage("Apply/Plan") {
+                    if (!params.destroyChanges) {
+                        if (params.applyChanges) {
+                            println("Applying the changes!")
+                        } else {
+                            println("Planing the changes")
+                        }
+                    }  
+                }
 
-        stage("Pull the SCM"){
-            git 'https://github.com/ksalrin/jenkins-class.git'
-        }  
-
-        stage("Apply/Plan") {
-            container("fuchicorptools") {
-                if (!params.destroyChanges) {
-                    if (params.applyChanges) {
-                        println("Applying the changes!")
+                stage("Destroy") {
+                    if (!params.applyChanges) {
+                        if (params.destroyChanges) {
+                            println("Destroying everything")
+                        } 
                     } else {
-                         println("Planing the changes")
-                    }
-                }  
-            }
-        }
-
-        stage("Destroy") {
-            container("fuchicorptools") {
-                if (!params.applyChanges) {
-                    if (params.destroyChanges) {
-                        println("Destroying everything")
+                        println("""
+                            Sorry I can not destroy Tools!!!
+                            I can Destroy only following environments dev, qa, test, stage
+                            """)
+                        }
                     } 
-                } else {
-                     println("""
-                        Sorry I can not destroy Tools!!!
-                        I can Destroy only following environments dev, qa, test, stage
-                        """)
-                    }
-                } 
+
+
+                }
+
+
+            
             }
         }
-    }
 
