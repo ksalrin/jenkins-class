@@ -67,8 +67,7 @@ def slavePodTemplate = """
                     if (!params.applyChanges) {
                         if (params.destroyChanges) {
                             println("Destroying everything")
-                        } 
-                    } else {
+                        } else {
                         println("""
                             Sorry I can not destroy Tools!!!
                             I can Destroy only following environments dev, qa, test, stage
