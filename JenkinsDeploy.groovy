@@ -64,5 +64,20 @@ def slavePodTemplate = """
                 }  
             }
         }
+        stage("Destroy") {
+            container("fuchicorptools") {
+                if (!applyChanges) {
+                    if (destroyChanges) {
+                        println("Destroying everything")
+                    } 
+                } else {
+                     println("""
+                        Sorry I can not destroy Tools!!!
+                        I can Destroy only following environments dev, qa, test, stage
+                        """)
+                    }
+                } 
+            }
+        }
       }
     }
