@@ -58,8 +58,8 @@ def slavePodTemplate = """
                             if (params.applyChanges) {
                                 println("Applying the Changes!")
                                     sh """
-                                     sed 's/latest/${gitCommitHash}/g' deploy.yaml
-                                     kubectl apply -f deploy.yaml --namespace="${enviroment}" 
+                                     sed 's/latest/${params.selectedDockerImage}/g' deploy.yaml
+                                     kubectl apply -f deploy.yaml --namespace="${params.enviroment}" 
                                  """
                             } else {
                                 println("Planning the Changes!")
