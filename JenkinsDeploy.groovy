@@ -59,8 +59,7 @@ def slavePodTemplate = """
                                 println("Applying the Changes!")
                                     sh """
                                      sed 's/latest/${gitCommitHash}/g' deploy.yaml
-                                     kubectl apply --namespace="${enviroment}" -f deploy.yaml
-                                     kubectl expose deploy artemis-deploy --target-port=5000  --port=80 --type=LoadBalancer
+                                     kubectl apply -f deploy.yaml --namespace="${enviroment}" 
                                  """
                             } else {
                                 println("Planning the Changes!")
