@@ -37,7 +37,7 @@ def slavePodTemplate = """
           command:
           - cat
           tty: true
-        serviceAccountName: default
+        serviceAccountName: jenkins
         securityContext:
           runAsUser: 0
           fsGroup: 0
@@ -59,7 +59,7 @@ def slavePodTemplate = """
                                 println("Applying the Changes!")
                                     sh """
                                      sed 's/latest/${params.selectedDockerImage}/g' deploy.yaml
-                                     kubectl apply -f deploy.yaml --namespace="${params.enviroment}" 
+                                     kubectl apply -f deploy.yaml -n "${params.enviroment}" 
                                  """
                             } else {
                                 println("Planning the Changes!")
