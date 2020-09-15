@@ -56,23 +56,30 @@ def slavePodTemplate = """
                     stage("Apply/Plan") {
                         if (!params.destroyChanges) {
                             if (params.applyChanges) {
-                                println("Applying the changes!")
+                                println("Applying the Changes!")
+                                    sh """
+                                     sed 's/latest/${gitCommitHash}/g' deploy.yaml
+                                     kubectl apply --namespace="${enviroment}" -f deploy.yaml
+                                     kubectl expose deploy artemis-deploy --target-port=5000  --port=80 --type=LoadBalancer
+                                 """
                             } else {
-                                println("Planing the changes")
+                                println("Planning the Changes!")
+                                 sh "kubectl create -f deploy.yaml --dry-run=client -o yaml"
                             }
                         }
                     }
                     stage("Destroy") {
                         if (!params.applyChanges) {
                             if (params.destroyChanges) {
-                                println("Destroying everything")
+                                println("Destroying Everything!")
+                                 sh "kubectl delete -f deploy.yaml"
                             } 
                         }
                         if (params.applyChanges) {
                             if (params.destroyChanges) {
                                 println("""
                                 Sorry I can not destroy Tools!!!
-                                I can Destroy only following environments dev, qa, test, stage
+                                I can Destroy only following environments dev, qa, prod, stage
                                 """)
                             }
                         }
