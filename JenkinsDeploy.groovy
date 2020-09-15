@@ -52,7 +52,7 @@ def slavePodTemplate = """
                 stage("Pull the SCM") {
                     git 'https://github.com/fsadykov/jenkins-class'
                 }
-                withCredentialswithCredentials([string(credentialsId: 'jenkins-token', variable: 'jenkins-token')]) {
+                withCredentials([string(credentialsId: 'jenkins-token', variable: 'jenkins-token')]) {
                     dir('deployments/k8s') {
                         stage("Apply/Plan") {
                             if (!params.destroyChanges) {
