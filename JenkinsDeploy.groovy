@@ -52,38 +52,41 @@ def slavePodTemplate = """
                 stage("Pull the SCM") {
                     git 'https://github.com/fsadykov/jenkins-class'
                 }
-                dir('deployments/k8s') {
-                    stage("Apply/Plan") {
-                        if (!params.destroyChanges) {
-                            if (params.applyChanges) {
-                                println("Applying the Changes!")
-                                    sh """
-                                     sed 's/latest/${params.selectedDockerImage}/g' deploy.yaml
-                                     kubectl apply -f deploy.yaml -n "${params.enviroment}" 
-                                 """
-                            } else {
-                                println("Planning the Changes!")
-                                 sh "kubectl create -f deploy.yaml --dry-run=client -o yaml"
+                withCredentials([string(credentialsId: '1bf5d240-7222-4369-bb2d-b55befcaf250', variable: 'jenkins-token')]) {
+                    dir('deployments/k8s') {
+                        stage("Apply/Plan") {
+                            if (!params.destroyChanges) {
+                                if (params.applyChanges) {
+                                    println("Applying the Changes!")
+                                        sh """
+                                        sed 's/latest/${params.selectedDockerImage}/g' deploy.yaml
+                                        kubectl apply -f deploy.yaml -n "${params.enviroment}" 
+                                    """
+                                } else {
+                                    println("Planning the Changes!")
+                                    sh "kubectl create -f deploy.yaml --dry-run=client -o yaml"
+                                }
                             }
                         }
-                    }
-                    stage("Destroy") {
-                        if (!params.applyChanges) {
-                            if (params.destroyChanges) {
-                                println("Destroying Everything!")
-                                 sh "kubectl delete -f deploy.yaml"
-                            } 
-                        }
-                        if (params.applyChanges) {
-                            if (params.destroyChanges) {
-                                println("""
-                                Sorry I can not destroy Tools!!!
-                                I can Destroy only following environments dev, qa, prod, stage
-                                """)
+                        stage("Destroy") {
+                            if (!params.applyChanges) {
+                                if (params.destroyChanges) {
+                                    println("Destroying Everything!")
+                                     sh "kubectl delete -f deploy.yaml"
+                                } 
+                            }
+                            if (params.applyChanges) {
+                                if (params.destroyChanges) {
+                                    println("""
+                                    Sorry I can not destroy Tools!!!
+                                    I can Destroy only following environments dev, qa, prod, stage
+                                    """)
+                                }
                             }
                         }
                     }
                 }
+
             }
         }
     }
